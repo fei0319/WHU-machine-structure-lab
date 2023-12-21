@@ -5,7 +5,7 @@
 `define EXT_CTRL_UTYPE 6'b000100
 `define EXT_CTRL_JTYPE 6'b000101
 
-module EXT (
+module ext (
     input [4:0] iimm_shamt,
     input [11:0] iimm,
     input [11:0] simm,

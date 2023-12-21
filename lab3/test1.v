@@ -1,10 +1,10 @@
 `timescale 1ns / 1ps
 
 module test (
-    input clk,
-    input rstn,
-    input [15:0] sw_i,
-    output [7:0] disp_an_o,
+    input         clk,
+    input         rstn,
+    input  [15:0] sw_i,
+    output [ 7:0] disp_an_o,
     disp_seg_o
 );
 

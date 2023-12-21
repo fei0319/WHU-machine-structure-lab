@@ -41,19 +41,16 @@ module cpu (
 
     assign disp_data = {{32{1'b0}}, inst};
 
-    wire ALUSrc;
-    wire [31:0] imm;
-
+    wire RegWrite;
     wire [5:0] rs1, rs2, rd;
     assign rs1 = inst[24:20];
     assign rs2 = inst[19:15];
     assign rd  = inst[11:7];
     wire [31:0] rs1_data, rs2_data, rd_data;
-
     rf u_rf (
         .clk(clk),
         .rstn(rstn),
-        .write_enable(),
+        .write_enable(RegWrite),
         .sw_i(sw_i),
         .rs1(rs1),
         .rs2(rs2),
@@ -63,12 +60,54 @@ module cpu (
         .rd2(rs2_data)
     );
 
+    wire MemWrite, ALUSrc, WDSel;
+    wire [4:0] ALUOp;
+    wire [5:0] EXTOp;
+    wire [2:0] DMType;
+    ctrl u_ctrl (
+        .Op(inst[6:0]),
+        .Funct7(inst[31:25]),
+        .Funct3(inst[14:12]),
+        .RegWrite(RegWrite),
+        .MemWrite(MemWrite),
+        .EXTOp(EXTOp),
+        .ALUOp(ALUOp),
+        .ALUSrc(ALUSrc),
+        .DMType(DMType),
+        .WDSel(WDSel)
+    );
+
+    wire [31:0] imm;
+    ext u_ext (
+        .iimm_shamt(imm[24:20]),
+        .iimm(imm[31:20]),
+        .simm({imm[31:25], imm[11:7]}),
+        .bimm({imm[31], imm[7], imm[30:25], imm[11:8]}),
+        .uimm(),
+        .jimm(),
+        .EXTOp(EXTOp),
+        .immout(imm)
+    );
+
+    wire [31:0] ALUResult;
     alu u_alu (
         .A(rs1_data),
         .B(ALUSrc ? imm : rs2_data),
-        .ALUOp(),
-        .C(),
+        .ALUOp(ALUOp),
+        .C(ALUResult),
         .Zero()
     );
+
+    wire [31:0] dout;
+    dm u_dm (
+        .clk(clk),
+        .DMWr(MemWrite),
+        .address(ALUResult),
+        .din(rs2_data),
+        .DMType(DMType),
+        .dout(dout)
+    );
+
+    assign rd_data = WDSel ? dout : ALUResult;
 
 endmodule

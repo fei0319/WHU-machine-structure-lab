@@ -3,22 +3,12 @@
 
 module alu (
     input signed [31:0] A,
-    B,
+    input signed [31:0] B,
     input [4:0] ALUOp,
     output signed [31:0] C,
-    output reg [7:0] Zero
+    output [7:0] Zero
 );
 
-    reg signed [31:0] res;
-
-    always @(A, B, ALUOp) begin
-        case (ALUOp)
-            `ALUOp_add: res <= A + B;
-            `ALUOp_sub: res <= A - B;
-            default: res <= 0;
-        endcase
-    end
-
-    assign C = res;
+    assign C = A + B;
 
 endmodule

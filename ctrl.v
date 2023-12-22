@@ -39,7 +39,4 @@ module ctrl (
     assign EXTOp = (itype ? (shamt ? `EXT_CTRL_ITYPE_SHAMT : `EXT_CTRL_ITYPE) : (ltype ? `EXT_CTRL_ITYPE : `EXT_CTRL_STYPE));
     assign ALUOp = `ALUOp_add;
 
-    always @(Op or Funct7 or Funct3) begin
-    end
-
 endmodule

@@ -7,7 +7,7 @@
 module dm (
     input clk,
     input DMWr,
-    input [5:0] address,
+    input [4:0] address,
     input [31:0] din,
     input [2:0] DMType,
     output reg [31:0] dout
@@ -20,13 +20,13 @@ module dm (
             case (DMType)
                 `dm_word: begin
                     dmem[address]   <= din[7:0];
-                    dmem[address+1] <= din[15:7];
+                    dmem[address+1] <= din[15:8];
                     dmem[address+2] <= din[23:16];
                     dmem[address+3] <= din[31:24];
                 end
                 `dm_halfword: begin
                     dmem[address]   <= din[7:0];
-                    dmem[address+1] <= din[15:7];
+                    dmem[address+1] <= din[15:8];
                 end
                 `dm_byte: begin
                     dmem[address] <= din[7:0];

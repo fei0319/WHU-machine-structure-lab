@@ -15,7 +15,7 @@ module ext (
     input [5:0] EXTOp,
     output reg [31:0] immout
 );
-    always @(iimm) begin
+    always @(*) begin
         case (EXTOp)
             `EXT_CTRL_ITYPE_SHAMT: immout <= {27'b0, iimm_shamt[4:0]};
             `EXT_CTRL_ITYPE:

@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 module cpu (
     input clk,
     input rstn,
@@ -39,16 +37,14 @@ module cpu (
         else PC <= PC + 1;
     end
 
-    assign disp_data = {{32{1'b0}}, inst};
-
     wire RegWrite;
-    wire [5:0] rs1, rs2, rd;
-    assign rs1 = inst[24:20];
-    assign rs2 = inst[19:15];
+    wire [4:0] rs1, rs2, rd;
+    assign rs1 = inst[19:15];
+    assign rs2 = inst[24:20];
     assign rd  = inst[11:7];
     wire [31:0] rs1_data, rs2_data, rd_data;
     rf u_rf (
-        .clk(clk),
+        .clk(clk_cpu),
         .rstn(rstn),
         .write_enable(RegWrite),
         .sw_i(sw_i),
@@ -79,10 +75,10 @@ module cpu (
 
     wire [31:0] imm;
     ext u_ext (
-        .iimm_shamt(imm[24:20]),
-        .iimm(imm[31:20]),
-        .simm({imm[31:25], imm[11:7]}),
-        .bimm({imm[31], imm[7], imm[30:25], imm[11:8]}),
+        .iimm_shamt(inst[24:20]),
+        .iimm(inst[31:20]),
+        .simm({inst[31:25], inst[11:7]}),
+        .bimm({inst[31], inst[7], inst[30:25], inst[11:8]}),
         .uimm(),
         .jimm(),
         .EXTOp(EXTOp),
@@ -108,6 +104,7 @@ module cpu (
         .dout(dout)
     );
 
-    assign rd_data = WDSel ? dout : ALUResult;
+    assign rd_data   = WDSel ? dout : ALUResult;
+    assign disp_data = {{32{1'b0}}, PC[15:0] + 1, rd_data[15:0]};
 
 endmodule

@@ -30,6 +30,9 @@ module ctrl (
     wire stype = (Op == 7'b0100011);
     wire shamt = (Funct3 == 3'b001 || Funct3 == 3'b101);
 
+    wire srai = (itype && Funct3 == 3'b101 && Funct7 == 7'b0100000);
+    wire andi = (itype && Funct3 == 3'b000);
+
     assign RegWrite = rtype | itype | ltype;
     assign MemWrite = stype;
     assign ALUSrc = itype | ltype | stype;
@@ -37,6 +40,6 @@ module ctrl (
     assign WDSel = ltype;
 
     assign EXTOp = (itype ? (shamt ? `EXT_CTRL_ITYPE_SHAMT : `EXT_CTRL_ITYPE) : (ltype ? `EXT_CTRL_ITYPE : `EXT_CTRL_STYPE));
-    assign ALUOp = `ALUOp_add;
+    assign ALUOp = (srai ? `ALUOp_ra : (andi ? `ALUOp_and : `ALUOp_add));
 
 endmodule

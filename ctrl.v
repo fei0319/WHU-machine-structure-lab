@@ -31,7 +31,7 @@ module ctrl (
     wire shamt = (Funct3 == 3'b001 || Funct3 == 3'b101);
 
     wire srai = (itype && Funct3 == 3'b101 && Funct7 == 7'b0100000);
-    wire andi = (itype && Funct3 == 3'b000);
+    wire andi = (itype && Funct3 == 3'b111);
 
     assign RegWrite = rtype | itype | ltype;
     assign MemWrite = stype;

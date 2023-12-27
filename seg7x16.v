@@ -23,17 +23,10 @@ module seg7x16 (
 
     reg [7:0] o_sel_r;
 
-    always @(*)
-        case (seg7_addr)
-            7: o_sel_r = 8'b01111111;
-            6: o_sel_r = 8'b10111111;
-            5: o_sel_r = 8'b11011111;
-            4: o_sel_r = 8'b11101111;
-            3: o_sel_r = 8'b11110111;
-            2: o_sel_r = 8'b11111011;
-            1: o_sel_r = 8'b11111101;
-            0: o_sel_r = 8'b11111110;
-        endcase
+    always @(*) begin
+        o_sel_r = 8'b11111111;
+        o_sel_r[seg7_addr] = 1'b0;
+    end
 
     reg [63:0] i_data_store;
     always @(posedge clk, negedge rstn)
@@ -65,9 +58,10 @@ module seg7x16 (
                 7: seg_data_r = i_data_store[63:56];
             endcase
         end
+        
     reg [7:0] o_seg_r;
     always @(posedge clk, negedge rstn)
-        if (!rstn) o_seg_r <= 8'hff;
+        if (!rstn) o_seg_r <= 8'hFF;
         else if (disp_mode == 1'b0) begin
             case (seg_data_r)
                 4'h0: o_seg_r <= 8'hC0;

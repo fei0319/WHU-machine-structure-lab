@@ -11,6 +11,16 @@ module alu (
     output [7:0] Zero
 );
 
-    assign C = (ALUOp == ALUOp_add ? A + B : (ALUOp == ALUOp_ra ? A >> B : A & B));
+    reg [31:0] result;
+    always @(*) begin
+        case (ALUOp)
+            `ALUOp_add: result <= A + B;
+            `ALUOp_sub: result <= A - B;
+            `ALUOp_ra:  result <= A >>> B;
+            `ALUOp_and: result <= A & B;
+        endcase
+    end
+    assign C = result;
+
 
 endmodule
